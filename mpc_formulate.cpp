@@ -62,7 +62,7 @@ double[NUM_STATE_VARIABLES] mpc_state_differential (double State_variables[NUM_S
 	
 ****************************/
 
-double[NUM_PATH_CONSTRAINTS] mpc_path_constraints (double[NUM_STATE_VARIABLES] State_variables, double[NUM_CONTROL_VARIABLES] Control_variables)
+double[NUM_PATH_CONSTRAINTS] mpc_path_constraints (double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
 {
 	double Constraints [NUM_PATH_CONSTRAINTS];	
 }
@@ -75,7 +75,7 @@ double[NUM_PATH_CONSTRAINTS] mpc_path_constraints (double[NUM_STATE_VARIABLES] S
 	
 ****************************/
 
-double mpc_terminal_constraints(double[NUM_STATE_VARIABLES] State_variables)
+double mpc_terminal_constraints(double State_variables[NUM_STATE_VARIABLES])
 {
 	
 }

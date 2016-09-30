@@ -24,7 +24,8 @@
 	output: x(t+1)
 
 *********************/
-double[NUM_STATE_VARIABLES] Integrator(double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
+double[NUM_STATE_VARIABLES]
+Integrator(double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
 {
 	
 	double h  = INTERVAL_SIZE;
