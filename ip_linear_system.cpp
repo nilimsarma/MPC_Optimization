@@ -80,11 +80,37 @@ void Linear_System_Setup(struct_ip_vars s_ip_vars)
 	for(i = 0; i < VECTOR_SIZE_b2; i++, j++)	Vector_b[j] = -Vector_b2[i];
 	for(i = 0; i < VECTOR_SIZE_b3; i++, j++)	Vector_b[j] = -Vector_b3[i];		
 
-	//Solve Linear System
 	double Vector_x [VECTOR_x_SIZE];	
 
+/* ++ Solve Linear System ++ */
 
+	double a[SQ_MATRIX_A_SIZE * SQ_MATRIX_A_SIZE];
+	double b[VECTOR_b_SIZE];
+
+	//switch to column major
+	for (i = 0; i < SQ_MATRIX_A_SIZE; i++)
+		for(j = 0; j < SQ_MATRIX_A_SIZE; j++) 
+			a[j * SQ_MATRIX_A_SIZE + i] = Sq_Matrix_A[i][j];	
+
+	for(i = 0; i < VECTOR_b_SIZE; i++)	b[i] = Vector_b[i];
+		
+	int n = SQ_MATRIX_A_SIZE, nrhs = 1, lda = SQ_MATRIX_A_SIZE, ldb = VECTOR_b_SIZE, info;
+	int ipiv[SQ_MATRIX_A_SIZE];
 	
+	dgesv( n, nrhs, a, lda, ipiv, b, ldb, info );
+
+	if(info == 0) 
+	{
+		for(i = 0; i < VECTOR_x_SIZE; i++) Vector_x[i] = b[i];
+	}
+	else 
+	{
+		printf("\nLapack error!!!\n");
+		exit(1);
+	}
+
+/* -- Solve Linear System -- */
+
 	double Vector_Px [VECTOR_SIZE_Px];
 	double Vector_Ps [VECTOR_SIZE_Ps];
 	double Vector_Py [VECTOR_SIZE_Py];
