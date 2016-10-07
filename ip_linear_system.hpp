@@ -42,6 +42,15 @@ typedef struct
 	double Lagrange_multiplier_inequality[NUM_INEQUALITY_CONSTRAINTS];
 } struct_ip_vars;
 
+typedef struct
+{
+	double Vector_Px [VECTOR_SIZE_Px];
+	double Vector_Ps [VECTOR_SIZE_Ps];
+	double Vector_Py [VECTOR_SIZE_Py];
+	double Vector_Pz [VECTOR_SIZE_Pz];
+		
+} struct_primal_dual_direction;
+
 void Linear_System_Setup(struct_ip_vars s_ip_vars);
 double [HESSIAN_LAGRANGIAN_SIZE][HESSIAN_LAGRANGIAN_SIZE] Compute_Hessian_Lagrangian(struct_ip_vars s_ip_vars);
 double [JACOBIAN_EQUALITIES_NUM_ROWS][JACOBIAN_EQUALITIES_NUM_COLS] Compute_Jacobian_Equalities(struct_ip_vars s_ip_vars);

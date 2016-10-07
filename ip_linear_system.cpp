@@ -3,7 +3,7 @@
 
 //Solve Linear System Ax = b
 		
-void Linear_System_Setup(struct_ip_vars s_ip_vars)
+struct_primal_dual_direction Compute_primal_dual_direction (struct_ip_vars s_ip_vars)
 {
 	int i,j,k,m;
 		
@@ -111,16 +111,20 @@ void Linear_System_Setup(struct_ip_vars s_ip_vars)
 
 /* -- Solve Linear System -- */
 
-	double Vector_Px [VECTOR_SIZE_Px];
-	double Vector_Ps [VECTOR_SIZE_Ps];
-	double Vector_Py [VECTOR_SIZE_Py];
-	double Vector_Pz [VECTOR_SIZE_Pz];
+//	double Vector_Px [VECTOR_SIZE_Px];
+//	double Vector_Ps [VECTOR_SIZE_Ps];
+//	double Vector_Py [VECTOR_SIZE_Py];
+//	double Vector_Pz [VECTOR_SIZE_Pz];
+
+	struct_primal_dual_direction s_primal_dual_dir;
 
 	j = 0;
-	for(i = 0; i < VECTOR_SIZE_Px; i++, j++)	Vector_Px[i] = Vector_x[j];
-	for(i = 0; i < VECTOR_SIZE_Ps; i++, j++)	Vector_Ps[i] = Vector_x[j];
-	for(i = 0; i < VECTOR_SIZE_Py; i++, j++)	Vector_Py[i] = -Vector_x[j];
-	for(i = 0; i < VECTOR_SIZE_Pz; i++, j++)	Vector_Pz[i] = -Vector_x[j];		
+	for(i = 0; i < VECTOR_SIZE_Px; i++, j++)	s_primal_dual_dir.Vector_Px[i] = Vector_x[j];
+	for(i = 0; i < VECTOR_SIZE_Ps; i++, j++)	s_primal_dual_dir.Vector_Ps[i] = Vector_x[j];
+	for(i = 0; i < VECTOR_SIZE_Py; i++, j++)	s_primal_dual_dir.Vector_Py[i] = -Vector_x[j];
+	for(i = 0; i < VECTOR_SIZE_Pz; i++, j++)	s_primal_dual_dir.Vector_Pz[i] = -Vector_x[j];		
+
+	return s_primal_dual_dir;
 	
 }
 
