@@ -38,8 +38,8 @@ typedef struct
 	double Optimization_variables[NUM_OPTMIZATION_VARIABLES];
 	double mu;
 	double S[NUM_INEQUALITY_CONSTRAINTS];
-	double Lagrange_multiplier_equality[NUM_EQUALITY_CONSTRAINTS];
-	double Lagrange_multiplier_inequality[NUM_INEQUALITY_CONSTRAINTS];
+	double Lagrange_multiplier_equality[NUM_EQUALITY_CONSTRAINTS];	//y
+	double Lagrange_multiplier_inequality[NUM_INEQUALITY_CONSTRAINTS]; //z
 } struct_ip_vars;
 
 typedef struct
