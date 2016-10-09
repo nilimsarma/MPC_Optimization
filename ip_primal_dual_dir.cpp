@@ -207,15 +207,6 @@ void Compute_Jacobian_Inequalities(const struct_ip_vars &s_ip_vars, double Jacob
 }
 
 
-void Compute_Diag_Matrix_Sigma(const struct_ip_vars &s_ip_vars, double Diag_Matrix_Sigma[DIAG_MATRIX_SIGMA_SIZE])
-{
-	int i;	
-	for(i = 0; i < DIAG_MATRIX_SIGMA_SIZE; i++)
-	{
-		Diag_Matrix_Sigma[i] = s_ip_vars.Lagrange_multiplier_inequality[i] / s_ip_vars.S[i];
-	}
-}
-
 void Compute_Gradient_Lagrangian(const struct_ip_vars &s_ip_vars, double Gradient_Lagrangian[NUM_OPTMIZATION_VARIABLES])
 {
 	int i,j;
@@ -237,6 +228,15 @@ void Compute_Gradient_Lagrangian(const struct_ip_vars &s_ip_vars, double Gradien
 	}
 }
 
+
+void Compute_Diag_Matrix_Sigma(const struct_ip_vars &s_ip_vars, double Diag_Matrix_Sigma[DIAG_MATRIX_SIGMA_SIZE])
+{
+	int i;	
+	for(i = 0; i < DIAG_MATRIX_SIGMA_SIZE; i++)
+	{
+		Diag_Matrix_Sigma[i] = s_ip_vars.Lagrange_multiplier_inequality[i] / s_ip_vars.S[i];
+	}
+}
 
 void Compute_vector_b1(const struct_ip_vars &s_ip_vars, double vector_b1[VECTOR_SIZE_b1])
 {

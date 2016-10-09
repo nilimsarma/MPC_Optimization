@@ -87,7 +87,7 @@ double Compute_directional_derivative_merit_function(const struct_ip_vars &s_ip_
 	return dir_deriv_merit_func;
 }
 
-struct_alpha alpha_backtrack(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir, const struct_alpha &s_alpha_max)
+struct_alpha Backtrack_alpha(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir, const struct_alpha &s_alpha_max)
 {
 	int i,j,k;
 
@@ -214,7 +214,7 @@ int main(int argc, char** argv)
 			s_alpha_max  = Compute_alpha_max(s_ip_vars, s_primal_dual_dir);
 			
 			//compute alpha
-			s_alpha = alpha_backtrack(s_ip_vars, s_primal_dual_dir, s_alpha_max);
+			s_alpha = Backtrack_alpha(s_ip_vars, s_primal_dual_dir, s_alpha_max);
 
 			//update IP variables
 			Update_IP_vars(s_ip_vars, s_alpha, s_primal_dual_dir)
