@@ -119,31 +119,102 @@ struct_alpha alpha_backtrack(struct_ip_vars s_ip_vars, struct_primal_dual_direct
 		}
 		else 
 		{
-/*		
-			for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
-			{
-				s_ip_vars.Optimization_variables[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Px[i];
-			}
-			
-			for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
-			{
-				s_ip_vars.S[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Ps[i];
-			}
-
-			for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
-			{
-				s_ip_vars.Lagrange_multiplier_equality[i] += s_alpha.alpha_z * s_primal_dual_dir.Py[i];
-			}
-
-			for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
-			{
-				s_ip_vars.Lagrange_multiplier_inequality[i] += s_alpha.alpha_z * s_primal_dual_dir.Pz[i];			
-			}
-*/
 			return s_alpha;
 		}
 	}
 	
+}
+
+struct_ip_vars Update_IP_vars(struct_ip_vars s_ip_vars, struct_alpha s_alpha, struct_primal_dual_direction s_primal_dual_dir)
+{
+	int i,j,k;
+		
+	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
+	{
+		s_ip_vars.Optimization_variables[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Px[i];
+	}
+
+	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
+	{
+		s_ip_vars.S[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Ps[i];
+	}
+
+	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
+	{
+		s_ip_vars.Lagrange_multiplier_equality[i] += s_alpha.alpha_z * s_primal_dual_dir.Py[i];
+	}
+
+	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
+	{
+		s_ip_vars.Lagrange_multiplier_inequality[i] += s_alpha.alpha_z * s_primal_dual_dir.Pz[i];			
+	}
+
+	return s_ip_vars;
+}
+
+double Compute_error(struct_ip_vars s_ip_vars, double mu)
+{
+	int i;
+	double err[NUM_ERROR_TERMS], error_max;
+
+	err[0] = fabs(Compute_Gradient_Lagrangian(s_ip_vars));
+
+	err[1] = 0.0;
+	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
+	{
+		err[1] += fabs(s_ip_vars.Lagrange_multiplier_inequality[i] - mu / s_ip_vars.S[i]);
+	}
+
+	double equality_constraints[NUM_EQUALITY_CONSTRAINTS] = Compute_equality_constraints(s_ip_vars);
+
+	err[2] = 0.0;	
+	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
+	{
+		err[2] += fabs(equality_constraints[i]);
+	}
+	
+	double inequality_constraints[NUM_EQUALITY_CONSTRAINTS] = Compute_inequality_constraints(s_ip_vars);
+	
+	err[3] = 0.0;
+	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
+	{
+		err[3] += fabs(inequality_constraints[i] - s_ip_vars.S[i]);
+	}
+
+	error_max = err[0];
+	for(i = 1; i < NUM_ERROR_TERMS; i++)
+	{
+		if ( err[i] > error_max)	error_max = err[i];
+	}
+
+	return error_max;
+}
+
+int main(int argc, char** argv)
+{
+	struct_ip_vars s_ip_vars;
+	struct_primal_dual_direction s_primal_dual_dir;
+	struct_alpha s_alpha_max, s_alpha;
+	
+	//select intial points
+
+	while(Compute_error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
+	{
+		while(Compute_error(s_ip_vars, s_primal_dual_dir.mu) > ERROR_TOL_MU)
+		{
+			//compute primal dual directions
+			s_primal_dual_dir = Compute_primal_dual_direction (s_ip_vars);
+			
+			//compute alpha_max
+			s_alpha_max  = Compute_alpha_max(s_ip_vars, s_primal_dual_dir);
+			
+			//compute alpha
+			s_alpha = alpha_backtrack(s_ip_vars, s_primal_dual_dir, s_alpha_max);
+		}
+
+		//update mu
+		s_primal_dual_dir.mu *= SIGMA_MU;
+	}
 }
 
 #endif //IP_ITER_CPP

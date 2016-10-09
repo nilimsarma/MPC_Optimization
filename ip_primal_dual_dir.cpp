@@ -1,5 +1,5 @@
-#ifndef IP_LINEAR_SYSTEM_CPP
-#define IP_LINEAR_SYSTEM_CPP
+#ifndef IP_PRIMAL_DUAL_DIR_CPP
+#define IP_PRIMAL_DUAL_DIR_CPP
 
 //Solve Linear System Ax = b
 		
@@ -342,4 +342,4 @@ Compute_Lagrangian(struct_ip_vars s_ip_vars)
 }
 
 
-#endif // IP_LINEAR_SYSTEM_CPP
+#endif // IP_PRIMAL_DUAL_DIR_CPP

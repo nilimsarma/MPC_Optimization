@@ -1,5 +1,5 @@
-#ifndef IP_LINEAR_SYSTEM_HPP
-#define IP_LINEAR_SYSTEM_HPP
+#ifndef IP_PRIMAL_DUAL_DIR_HPP
+#define IP_PRIMAL_DUAL_DIR_HPP
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,4 +65,4 @@ double [VECTOR_SIZE_b3] Compute_vector_b3(struct_ip_vars s_ip_vars);
 double Compute_Lagrangian(struct_ip_vars s_ip_vars);
 
 
-#endif // IP_LINEAR_SYSTEM_HPP
+#endif // IP_PRIMAL_DUAL_DIR_HPP
