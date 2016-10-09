@@ -5,9 +5,7 @@
 
 typedef struct
 {
-	double alpha_x;
 	double alpha_s;
-	double alpha_y;
 	double alpha_z;
 	
 } struct_alpha;
