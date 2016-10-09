@@ -11,6 +11,7 @@
 #define	ERROR_TOL_TOTAL
 #define SIGMA_MU
 #define ESP_DIFFERENTIATION		
+#define ALPHA_BACKTRACK_VAL 
 
 #define NUM_ERROR_TERMS 4
 

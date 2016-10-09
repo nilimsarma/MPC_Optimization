@@ -24,8 +24,7 @@
 	output: x(t+1)
 
 *********************/
-double[NUM_STATE_VARIABLES]
-Integrator(double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
+void Integrator(const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES], double State_vars_updated[NUM_STATE_VARIABLES])
 {
 	
 	double h  = INTERVAL_SIZE;
@@ -50,16 +49,14 @@ Integrator(double State_variables[NUM_STATE_VARIABLES], double Control_variables
 		State_vars[i] = State_variables[i];
 	}
 
-	k1 = Evaluate_state_differential(State_vars, Control_vars);
+	mpc_state_differential(State_vars, Control_vars, k1);
 	
 	for(i = 0; i < NUM_STATE_VARIABLES; i++)
 	{
 		State_vars[i] = State_variables[i] + h*a21*k1[i];
 	}
 	
-	k2 = Evaluate_state_differential(State_vars, Control_vars);
-
-	double State_vars_updated[NUM_STATE_VARIABLES];
+	mpc_state_differential(State_vars, Control_vars, k2);
 
 	for(i = 0; i < NUM_STATE_VARIABLES; i++)
 	{
@@ -68,7 +65,7 @@ Integrator(double State_variables[NUM_STATE_VARIABLES], double Control_variables
 	
 }
 
-double Compute_objective_value(struct_ip_vars s_ip_vars)
+double Compute_objective_value(const struct_ip_vars &s_ip_vars)
 {
 	int i,j,k,m;
 
@@ -82,21 +79,20 @@ double Compute_objective_value(struct_ip_vars s_ip_vars)
 	{
 		for(j = 0; j < NUM_STATE_VARIABLES; j++)	State_variables[j] = s_ip_vars.Optimization_variables[m++];
 		for(j = 0; j < NUM_CONTROL_VARIABLES; j++)	Control_variables[j] = s_ip_vars.Optimization_variables[m++];
-		objective_value += mpc_objective(State_variables,Control_variables);
+		objective_value += mpc_objective(State_variables, Control_variables);
 	}
 
 	for(j = 0; j < NUM_STATE_VARIABLES; j++)	State_variables[j] = s_ip_vars.Optimization_variables[m++];
 	for(j = 0; j < NUM_CONTROL_VARIABLES; j++)	Control_variables[j] = s_ip_vars.Optimization_variables[m++];	
-	objective_value += mpc_objective_end_term(State_variables,Control_variables);
+	objective_value += mpc_objective_end_term(State_variables, Control_variables);
 
 	return objective_value;
 }
 
-double[NUM_EQUALITY_CONSTRAINTS] Compute_equality_constraints(struct_ip_vars s_ip_vars)
+void Compute_equality_constraints(const struct_ip_vars &s_ip_vars, double Equality_constraints[NUM_EQUALITY_CONSTRAINTS])
 {
 	int i,j,k,m,p;
 
-	double Equality_constraints[NUM_EQUALITY_CONSTRAINTS];
 	double State_variables[NUM_STATE_VARIABLES];
 	double Control_variables[NUM_CONTROL_VARIABLES];
 	
@@ -109,14 +105,14 @@ double[NUM_EQUALITY_CONSTRAINTS] Compute_equality_constraints(struct_ip_vars s_i
 	for(j = 0; j < NUM_STATE_VARIABLES; j++)	State_variables[j]	 = s_ip_vars.Optimization_variables[m++];
 	for(j = 0; j < NUM_CONTROL_VARIABLES; j++)	Control_variables[j] = s_ip_vars.Optimization_variables[m++];
 
-	State_vars_updated = mpc_initial_value();
+	mpc_initial_value(State_vars_updated);
 	
 	for(j = 0; j < NUM_STATE_VARIABLES; j++)	Equality_constraints[p++] = State_variables[j] - State_vars_updated[j];
 
 	//updated state variables using integrator
 	for(i = 1; i < NUM_DISCRETIZATION; i++)
 	{
-		State_vars_updated = Integrator(State_variables, Control_variables);
+		Integrator(State_variables, Control_variables, State_vars_updated);
 
 		for(j = 0; j < NUM_STATE_VARIABLES; j++)	State_variables[j] 	 = s_ip_vars.Optimization_variables[m++];
 		for(j = 0; j < NUM_CONTROL_VARIABLES; j++)	Control_variables[j] = s_ip_vars.Optimization_variables[m++];
@@ -124,15 +120,12 @@ double[NUM_EQUALITY_CONSTRAINTS] Compute_equality_constraints(struct_ip_vars s_i
 		for(j = 0; j < NUM_STATE_VARIABLES; j++)	Equality_constraints[p++] = State_variables[j] - State_vars_updated[j];
 		
 	}
-
-	return Equality_constraints;
 }
 
-double[NUM_INEQUALITY_CONSTRAINTS] Compute_inequality_constraints(struct_ip_vars s_ip_vars)
+void Compute_inequality_constraints(const struct_ip_vars &s_ip_vars, double Inequality_constraints[NUM_INEQUALITY_CONSTRAINTS])
 {
 	int i,j,k,m,p;
 
-	double Inequality_constraints[NUM_INEQUALITY_CONSTRAINTS];
 	double path_constraints[NUM_PATH_CONSTRAINTS];
 	double terminal_constraints[NUM_TERMINAL_CONSTRAINTS];
 
@@ -145,14 +138,12 @@ double[NUM_INEQUALITY_CONSTRAINTS] Compute_inequality_constraints(struct_ip_vars
 		for(j = 0; j < NUM_STATE_VARIABLES; j++)	State_variables[j] 	 = s_ip_vars.Optimization_variables[m++];
 		for(j = 0; j < NUM_CONTROL_VARIABLES; j++)	Control_variables[j] = s_ip_vars.Optimization_variables[m++];
 
-		path_constraints = mpc_path_constraints(State_variables,Control_variables);
-		terminal_constraints = mpc_terminal_constraints(State_variables);
+		mpc_path_constraints(State_variables,Control_variables, path_constraints);
+		mpc_terminal_constraints(State_variables, terminal_constraints);
 
 		for(j = 0 ; j < NUM_PATH_CONSTRAINTS; j++)	Inequality_constraints[p++] = path_constraints[j];
 		for(j = 0 ; j < NUM_TERMINAL_CONSTRAINTS; j++)	Inequality_constraints[p++] = terminal_constraints[j];
 	}
-
-	return Inequality_constraints;
 }
 
 #endif // MPC_DISCRETIZE_CPP

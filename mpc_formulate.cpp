@@ -8,7 +8,7 @@
 	return: f(x(t), u(t))
 	
 ****************************/
-double mpc_objective (double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
+double mpc_objective (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES])
 {
 	double objective_value = 0;
 }
@@ -20,7 +20,7 @@ double mpc_objective (double State_variables[NUM_STATE_VARIABLES], double Contro
 	
 ****************************/
 
-double mpc_objective_end_term(double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
+double mpc_objective_end_term(const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES])
 {
 }
 
@@ -33,9 +33,8 @@ double mpc_objective_end_term(double State_variables[NUM_STATE_VARIABLES], doubl
 ****************************/
 
 
-double[NUM_STATE_VARIABLES] mpc_initial_value (void)
+void mpc_initial_value (double[NUM_STATE_VARIABLES] State_variables_initial_value)
 {
-	double[NUM_STATE_VARIABLES] State_variables_initial_value;
 }
 
 /****************************
@@ -45,11 +44,9 @@ double[NUM_STATE_VARIABLES] mpc_initial_value (void)
 	
 ****************************/
 
-double[NUM_STATE_VARIABLES] mpc_state_differential (double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
+void mpc_state_differential (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES], double dot_State_variables [NUM_STATE_VARIABLES])
 {
 	int i = 0;
-	double dot_State_variables [NUM_STATE_VARIABLES];
-
 	dot_State_variables[i++] = 	
 	
 }
@@ -62,9 +59,9 @@ double[NUM_STATE_VARIABLES] mpc_state_differential (double State_variables[NUM_S
 	
 ****************************/
 
-double[NUM_PATH_CONSTRAINTS] mpc_path_constraints (double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES])
+void mpc_path_constraints (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES], double Constraints [NUM_PATH_CONSTRAINTS])
 {
-	double Constraints [NUM_PATH_CONSTRAINTS];	
+	
 }
 
 
@@ -75,7 +72,7 @@ double[NUM_PATH_CONSTRAINTS] mpc_path_constraints (double State_variables[NUM_ST
 	
 ****************************/
 
-double mpc_terminal_constraints(double State_variables[NUM_STATE_VARIABLES])
+double mpc_terminal_constraints(const double State_variables[NUM_STATE_VARIABLES])
 {
 	
 }

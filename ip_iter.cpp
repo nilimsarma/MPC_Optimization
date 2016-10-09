@@ -3,7 +3,7 @@
 
 #include "ip_iter.hpp"
 
-struct_alpha Compute_alpha_max(struct_ip_vars s_ip_vars, struct_primal_dual_direction s_primal_dual_dir)
+struct_alpha Compute_alpha_max(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir)
 {
 	int i,j,k;	
 	struct_alpha s_alpha_max;
@@ -35,7 +35,7 @@ struct_alpha Compute_alpha_max(struct_ip_vars s_ip_vars, struct_primal_dual_dire
 	return s_alpha_max;
 }
 
-double Compute_merit_function(struct_ip_vars s_ip_vars)
+double Compute_merit_function(const struct_ip_vars &s_ip_vars)
 {
 	int i,j,k;
 	double merit_value;
@@ -63,7 +63,7 @@ double Compute_merit_function(struct_ip_vars s_ip_vars)
 	return merit_value;
 }
 
-double Compute_directional_derivative_merit_function(struct_ip_vars s_ip_vars, struct_primal_dual_direction s_primal_dual_dir)
+double Compute_directional_derivative_merit_function(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir)
 {
 	int i,j;
 
@@ -87,47 +87,50 @@ double Compute_directional_derivative_merit_function(struct_ip_vars s_ip_vars, s
 	return dir_deriv_merit_func;
 }
 
-struct_alpha alpha_backtrack(struct_ip_vars s_ip_vars, struct_primal_dual_direction s_primal_dual_dir, struct_alpha s_alpha_max)
+struct_alpha alpha_backtrack(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir, const struct_alpha &s_alpha_max)
 {
+	int i,j,k;
+
 	struct_ip_vars s_ip_vars_1;
 	struct_alpha s_alpha;
 	double merit_function, merit_function_updated, dir_deriv_merit_function;
-	int i,j,k;
 	
 	s_alpha = s_alpha_max;
 
+	merit_function = Compute_merit_function(s_ip_vars);
+	dir_deriv_merit_function = Compute_directional_derivative_merit_function(s_ip_vars, s_primal_dual_dir);
+
+	s_ip_vars_1 = s_ip_vars;
+
+	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++) 
+		s_ip_vars_1.Optimization_variables[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Px[i];
+	
+	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++) 
+		s_ip_vars_1.S[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Ps[i];
+
 	while(1)
 	{
-		s_ip_vars_1 = s_ip_vars;
-
-		merit_function = Compute_merit_function(s_ip_vars_1);
-		dir_deriv_merit_function = Compute_directional_derivative_merit_function(s_ip_vars_1, s_primal_dual_dir);
 		
-		for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
-		{
-			s_ip_vars_1.Optimization_variables[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Px[i];
-		}
-
-		for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
-		{
-			s_ip_vars_1.S[i] += s_alpha.alpha_s * s_primal_dual_dir.Vector_Ps[i];
-		}
-
 		merit_function_updated = Compute_merit_function(s_ip_vars_1);
 
-		if( merit_function + s_ip_vars_1.eta * s_alpha.alpha_s * dir_deriv_merit_function - merit_function_updated < 0)
+		if( (merit_function + s_ip_vars_1.eta * s_alpha.alpha_s * dir_deriv_merit_function - merit_function_updated) < 0)
 		{
-			s_alpha.alpha_s -= 0.1;
+			s_alpha.alpha_s -= ALPHA_BACKTRACK_VAL;
+
+			for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
+				s_ip_vars_1.Optimization_variables[i] -= ALPHA_BACKTRACK_VAL * s_primal_dual_dir.Vector_Px[i];
+			
+			for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
+				s_ip_vars_1.S[i] -= ALPHA_BACKTRACK_VAL * s_primal_dual_dir.Vector_Ps[i];
 		}
 		else 
 		{
 			return s_alpha;
 		}
 	}
-	
 }
 
-struct_ip_vars Update_IP_vars(struct_ip_vars s_ip_vars, struct_alpha s_alpha, struct_primal_dual_direction s_primal_dual_dir)
+void Update_IP_vars(struct_ip_vars &s_ip_vars, const struct_alpha &s_alpha, const struct_primal_dual_direction &s_primal_dual_dir)
 {
 	int i,j,k;
 		
@@ -143,18 +146,18 @@ struct_ip_vars Update_IP_vars(struct_ip_vars s_ip_vars, struct_alpha s_alpha, st
 
 	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
 	{
-		s_ip_vars.Lagrange_multiplier_equality[i] += s_alpha.alpha_z * s_primal_dual_dir.Py[i];
+		s_ip_vars.Lagrange_multiplier_equality[i] += s_alpha.alpha_z * s_primal_dual_dir.Vector_Py[i];
 	}
 
 	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
 	{
-		s_ip_vars.Lagrange_multiplier_inequality[i] += s_alpha.alpha_z * s_primal_dual_dir.Pz[i];			
+		s_ip_vars.Lagrange_multiplier_inequality[i] += s_alpha.alpha_z * s_primal_dual_dir.Vector_Pz[i];			
 	}
 
 	return s_ip_vars;
 }
 
-double Compute_error(struct_ip_vars s_ip_vars, double mu)
+double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 {
 	int i;
 	double err[NUM_ERROR_TERMS], error_max;
@@ -200,18 +203,21 @@ int main(int argc, char** argv)
 	
 	//select intial points
 
-	while(Compute_error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
+	while(Compute_Error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
 	{
-		while(Compute_error(s_ip_vars, s_primal_dual_dir.mu) > ERROR_TOL_MU)
+		while(Compute_Error(s_ip_vars, s_primal_dual_dir.mu) > ERROR_TOL_MU)
 		{
 			//compute primal dual directions
-			s_primal_dual_dir = Compute_primal_dual_direction (s_ip_vars);
+			Compute_primal_dual_direction (s_ip_vars, s_primal_dual_dir);
 			
 			//compute alpha_max
 			s_alpha_max  = Compute_alpha_max(s_ip_vars, s_primal_dual_dir);
 			
 			//compute alpha
 			s_alpha = alpha_backtrack(s_ip_vars, s_primal_dual_dir, s_alpha_max);
+
+			//update IP variables
+			Update_IP_vars(s_ip_vars, s_alpha, s_primal_dual_dir)
 		}
 
 		//update mu
