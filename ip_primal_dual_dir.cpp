@@ -1,6 +1,8 @@
 #ifndef IP_PRIMAL_DUAL_DIR_CPP
 #define IP_PRIMAL_DUAL_DIR_CPP
 
+#include "ip_primal_dual_dir.hpp"
+
 //Solve Linear System Ax = b
 		
 struct_primal_dual_direction Compute_primal_dual_direction (struct_ip_vars s_ip_vars)
@@ -110,11 +112,6 @@ struct_primal_dual_direction Compute_primal_dual_direction (struct_ip_vars s_ip_
 	}
 
 /* -- Solve Linear System -- */
-
-//	double Vector_Px [VECTOR_SIZE_Px];
-//	double Vector_Ps [VECTOR_SIZE_Ps];
-//	double Vector_Py [VECTOR_SIZE_Py];
-//	double Vector_Pz [VECTOR_SIZE_Pz];
 
 	struct_primal_dual_direction s_primal_dual_dir;
 

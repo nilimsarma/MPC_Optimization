@@ -1,6 +1,8 @@
 #ifndef IP_ITER_CPP
 #define IP_ITER_CPP
 
+#include "ip_iter.hpp"
+
 struct_alpha Compute_alpha_max(struct_ip_vars s_ip_vars, struct_primal_dual_direction s_primal_dual_dir)
 {
 	int i,j,k;	
