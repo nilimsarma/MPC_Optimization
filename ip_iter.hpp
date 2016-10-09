@@ -7,7 +7,7 @@
 #define	ERROR_TOL_TOTAL
 #define SIGMA_MU
 
-typedef struct
+typedef struct  
 {
 	double alpha_s;
 	double alpha_z;

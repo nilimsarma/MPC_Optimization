@@ -2,7 +2,7 @@
 #define MPC_DISCRETIZE_HPP
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> 
 
 
 double[NUM_STATE_VARIABLES] Integrator(double State_variables[NUM_STATE_VARIABLES], double Control_variables[NUM_CONTROL_VARIABLES]);

@@ -2,7 +2,7 @@
 #define MPC_FORMULATE_CPP
 
 #include "mpc_formulate.hpp"
-
+ 
 /****************************
 	input: x(t), u(t)
 	return: f(x(t), u(t))

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "mpc_formulate.hpp"
 
-//Solve Linear System Ax = b
+//Solve Linear System Ax = b 
 
 #define HESSIAN_LAGRANGIAN_SIZE 	NUM_OPTMIZATION_VARIABLES
 

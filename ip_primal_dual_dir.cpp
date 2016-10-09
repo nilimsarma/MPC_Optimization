@@ -6,7 +6,7 @@
 struct_primal_dual_direction Compute_primal_dual_direction (struct_ip_vars s_ip_vars)
 {
 	int i,j,k,m;
-		
+		 
 	double Hessian_Lagrangian [HESSIAN_LAGRANGIAN_SIZE][HESSIAN_LAGRANGIAN_SIZE];
 	double Jacobian_Equalities [JACOBIAN_EQUALITIES_NUM_ROWS][JACOBIAN_EQUALITIES_NUM_COLS];
 	double Jacobian_Inequalities [JACOBIAN_INEQUALITIES_NUM_ROWS][JACOBIAN_INEQUALITIES_NUM_COLS];

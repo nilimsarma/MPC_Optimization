@@ -5,7 +5,7 @@
 
 /****************************************************************
 
-	Gauss Legendre Order 4 Integrator (Explicit) -- may change later to implicit
+	Gauss Legendre Order 4 Integrator (Explicit) -- may change later to implicit 
 
 	b1 = 1/2
 	b2 = 1/2
