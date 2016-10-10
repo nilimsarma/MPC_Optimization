@@ -44,12 +44,15 @@ double Compute_merit_function(const struct_ip_vars &s_ip_vars)
 
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
-		merit_value -= s_ip_vars.mu * log(s_ip_vars.s[i]);
+		merit_value -= s_ip_vars.mu * log(s_ip_vars.S[i]);
 	}
 
-	double inequality_constraints[NUM_INEQUALITY_CONSTRAINTS] = Compute_inequality_constraints(s_ip_vars);
-	double equality_constraints[NUM_EQUALITY_CONSTRAINTS] = Compute_equality_constraints(s_ip_vars);
-	
+	double inequality_constraints[NUM_INEQUALITY_CONSTRAINTS];
+	double equality_constraints[NUM_EQUALITY_CONSTRAINTS];
+
+	Compute_inequality_constraints(s_ip_vars, inequality_constraints);
+	Compute_equality_constraints(s_ip_vars, equality_constraints);
+	 
 	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
 	{
 		merit_value += s_ip_vars.nu * fabs(equality_constraints[i]);
@@ -68,20 +71,23 @@ double Compute_directional_derivative_merit_function(const struct_ip_vars &s_ip_
 	int i,j;
 
 	double dir_deriv_merit_func = 0;
+	struct_ip_vars s_ip_vars_1;
+
+	s_ip_vars_1 = s_ip_vars;
 
 	dir_deriv_merit_func = -Compute_merit_function(s_ip_vars);
 	
 	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
 	{
-		s_ip_vars.Optimization_variables[i] += ESP_DIFFERENTIATION * s_primal_dual_dir.Vector_Px[i];
+		s_ip_vars_1.Optimization_variables[i] += ESP_DIFFERENTIATION * s_primal_dual_dir.Vector_Px[i];
 	}
 
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
-		s_ip_vars.S[i] += ESP_DIFFERENTIATION * s_primal_dual_dir.Vector_Ps[i];
+		s_ip_vars_1.S[i] += ESP_DIFFERENTIATION * s_primal_dual_dir.Vector_Ps[i];
 	}
 
-	dir_deriv_merit_func += Compute_merit_function(s_ip_vars);
+	dir_deriv_merit_func += Compute_merit_function(s_ip_vars_1);
 	dir_deriv_merit_func /= ESP_DIFFERENTIATION;
 
 	return dir_deriv_merit_func;
@@ -153,8 +159,6 @@ void Update_IP_vars(struct_ip_vars &s_ip_vars, const struct_alpha &s_alpha, cons
 	{
 		s_ip_vars.Lagrange_multiplier_inequality[i] += s_alpha.alpha_z * s_primal_dual_dir.Vector_Pz[i];			
 	}
-
-	return s_ip_vars;
 }
 
 double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
@@ -170,7 +174,8 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 		err[1] += fabs(s_ip_vars.Lagrange_multiplier_inequality[i] - mu / s_ip_vars.S[i]);
 	}
 
-	double equality_constraints[NUM_EQUALITY_CONSTRAINTS] = Compute_equality_constraints(s_ip_vars);
+	double equality_constraints[NUM_EQUALITY_CONSTRAINTS];
+	Compute_equality_constraints(s_ip_vars, equality_constraints);
 
 	err[2] = 0.0;	
 	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
@@ -178,7 +183,8 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 		err[2] += fabs(equality_constraints[i]);
 	}
 	
-	double inequality_constraints[NUM_EQUALITY_CONSTRAINTS] = Compute_inequality_constraints(s_ip_vars);
+	double inequality_constraints[NUM_EQUALITY_CONSTRAINTS];
+	Compute_inequality_constraints(s_ip_vars, inequality_constraints);
 	
 	err[3] = 0.0;
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
@@ -231,7 +237,7 @@ int main(int argc, char** argv)
 //start iterations	
 	while(Compute_Error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
 	{
-		while(Compute_Error(s_ip_vars, s_primal_dual_dir.mu) > ERROR_TOL_MU)
+		while(Compute_Error(s_ip_vars, s_ip_vars.mu) > ERROR_TOL_MU)
 		{
 			//compute primal dual directions
 			Compute_primal_dual_direction (s_ip_vars, s_primal_dual_dir);
