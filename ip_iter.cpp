@@ -166,13 +166,26 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 	int i;
 	double err[NUM_ERROR_TERMS], error_max;
 
-	err[0] = fabs(Compute_Gradient_Lagrangian(s_ip_vars));
+//err[0]
+
+	double Gradient_Lagrangian[NUM_OPTMIZATION_VARIABLES];
+	Compute_Gradient_Lagrangian(s_ip_vars, Gradient_Lagrangian);
+
+	err[0] = 0.0;
+	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
+	{
+		err[0] += fabs(Gradient_Lagrangian[i]);
+	}
+	
+//err[1]	
 
 	err[1] = 0.0;
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
 		err[1] += fabs(s_ip_vars.Lagrange_multiplier_inequality[i] - mu / s_ip_vars.S[i]);
 	}
+	
+//err[2]
 
 	double equality_constraints[NUM_EQUALITY_CONSTRAINTS];
 	Compute_equality_constraints(s_ip_vars, equality_constraints);
@@ -182,7 +195,9 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 	{
 		err[2] += fabs(equality_constraints[i]);
 	}
-	
+
+//err[3]
+
 	double inequality_constraints[NUM_EQUALITY_CONSTRAINTS];
 	Compute_inequality_constraints(s_ip_vars, inequality_constraints);
 	
@@ -192,8 +207,10 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 		err[3] += fabs(inequality_constraints[i] - s_ip_vars.S[i]);
 	}
 
-	error_max = err[0];
-	for(i = 1; i < NUM_ERROR_TERMS; i++)
+//total
+
+	error_max = 0;
+	for(i = 0; i < NUM_ERROR_TERMS; i++)
 	{
 		if ( err[i] > error_max)	error_max = err[i];
 	}
@@ -253,7 +270,7 @@ int main(int argc, char** argv)
 		}
 
 		//update mu
-		s_primal_dual_dir.mu *= SIGMA_MU;
+		s_ip_vars.mu *= SIGMA_MU;
 	}
 }
 
