@@ -2,7 +2,7 @@
 #define IP_ITER_HPP
 
 #include "ip.hpp"
-
+#include "mpc_discretize.hpp"
 
 struct_alpha Compute_alpha_max(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir);
 double Compute_merit_function(const struct_ip_vars &s_ip_vars);

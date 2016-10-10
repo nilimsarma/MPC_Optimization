@@ -36,13 +36,13 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	}
 
 	for(i = 0, k = ( HESSIAN_LAGRANGIAN_SIZE + DIAG_MATRIX_SIGMA_SIZE); i < JACOBIAN_EQUALITIES_NUM_ROWS ; i++, k++)
-	for(j = 0; m = 0; j < JACOBIAN_EQUALITIES_NUM_COLS; j++, m++)
+	for(j = 0, m = 0; j < JACOBIAN_EQUALITIES_NUM_COLS; j++, m++)
 	{
 		Sq_Matrix_A[k][m] = Jacobian_Equalities[i][j];
 	}
 
 	for(i = 0, k = ( HESSIAN_LAGRANGIAN_SIZE + DIAG_MATRIX_SIGMA_SIZE + JACOBIAN_EQUALITIES_NUM_ROWS ); i < JACOBIAN_INEQUALITIES_NUM_ROWS ; i++, k++)
-	for(j = 0; m = 0; j < JACOBIAN_INEQUALITIES_NUM_COLS; j++, m++)
+	for(j = 0, m = 0; j < JACOBIAN_INEQUALITIES_NUM_COLS; j++, m++)
 	{
 		Sq_Matrix_A[k][m] = Jacobian_Inequalities[i][j];
 	}

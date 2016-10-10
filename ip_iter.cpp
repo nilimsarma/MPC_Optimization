@@ -57,7 +57,7 @@ double Compute_merit_function(const struct_ip_vars &s_ip_vars)
 	
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
-		merit_value += s_ip_vars.nu * fabs(inequality_constraints[i] - s_ip_vars.s[i]);
+		merit_value += s_ip_vars.nu * fabs(inequality_constraints[i] - s_ip_vars.S[i]);
 	}
 
 	return merit_value;

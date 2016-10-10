@@ -2,7 +2,7 @@ IDIR = ./
 CC = gcc
 CFLAGS = -I$(IDIR)
 
-ODIR = obj
+ODIR = ./
 LDIR = 
 
 LIBS = -lm
