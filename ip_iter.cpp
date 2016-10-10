@@ -192,6 +192,9 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 		if ( err[i] > error_max)	error_max = err[i];
 	}
 
+	if(mu == 0)	printf("\nError = %e", error_max);
+	else printf("\n\tError = %e", error_max);
+
 	return error_max;
 }
 
@@ -200,9 +203,32 @@ int main(int argc, char** argv)
 	struct_ip_vars s_ip_vars;
 	struct_primal_dual_direction s_primal_dual_dir;
 	struct_alpha s_alpha_max, s_alpha;
-	
-	//select intial points
 
+	int i,j,k;
+
+// ++ select intial points ++
+
+	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
+		s_ip_vars.Optimization_variables[i] = (rand() % 1000) / 1000.0;
+
+	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
+		s_ip_vars.S[i] = (rand() % 1000) / 1000.0;
+
+	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
+		s_ip_vars.Lagrange_multiplier_equality[i] = (rand() % 1000) / 1000.0;
+
+	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
+		s_ip_vars.Lagrange_multiplier_inequality[i] = (rand() % 1000) / 1000.0;
+
+// -- select intial points --
+
+//set parameter values
+
+	s_ip_vars.mu = MU;
+	s_ip_vars.nu = NU;
+	s_ip_vars.eta = ETA;
+
+//start iterations	
 	while(Compute_Error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
 	{
 		while(Compute_Error(s_ip_vars, s_primal_dual_dir.mu) > ERROR_TOL_MU)
