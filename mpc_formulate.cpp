@@ -11,6 +11,15 @@
 double mpc_objective (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES])
 {
 	double objective_value = 0;
+	int i = 0;
+	
+	objective_value += (10.0 * State_variables[i] * State_variables[i]); i++;
+	objective_value += (10.0 * State_variables[i] * State_variables[i]); i++;
+	objective_value += (1.0 * State_variables[i] * State_variables[i]); i++;
+	objective_value += (1.0 * State_variables[i] * State_variables[i]); i++;
+	objective_value += (1.0e-8 * Control_variables[0] * State_variables[0]);
+
+	return objective_value;
 }
 
 /****************************
@@ -22,6 +31,7 @@ double mpc_objective (const double State_variables[NUM_STATE_VARIABLES], const d
 
 double mpc_objective_end_term(const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES])
 {
+	return 0;
 }
 
 
@@ -35,6 +45,9 @@ double mpc_objective_end_term(const double State_variables[NUM_STATE_VARIABLES],
 
 void mpc_initial_value (double[NUM_STATE_VARIABLES] State_variables_initial_value)
 {
+	int i;
+	for(i = 0; i < NUM_STATE_VARIABLES; i++)
+		State_variables_initial_value[i] = 0.0;
 }
 
 /****************************
@@ -46,9 +59,17 @@ void mpc_initial_value (double[NUM_STATE_VARIABLES] State_variables_initial_valu
 
 void mpc_state_differential (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES], double dot_State_variables [NUM_STATE_VARIABLES])
 {
-	int i = 0;
-	dot_State_variables[i++] = 	
+	double mB, mW, kS, kT;
+	mB = 350.0;
+	mW = 50.0;
+	kS = 20,000.0;
+	kT = 200,000.0;
 	
+	int i = 0;
+	dot_State_variables[i++] = 	State_variables[2];
+	dot_State_variables[i++] = 	State_variables[3];
+	dot_State_variables[i++] = 	(-kS*State_variables[0] + kS*State_variables[1] + Control_variables[0])/mB;
+	dot_State_variables[i++] = 	(kS*State_variables[0] - (kT + kS)*State_variables[1] + kT*Control_variables[1] - Control_variables[0])/mW;
 }
 
 
@@ -61,7 +82,12 @@ void mpc_state_differential (const double State_variables[NUM_STATE_VARIABLES], 
 
 void mpc_path_constraints (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES], double Constraints [NUM_PATH_CONSTRAINTS])
 {
+	int i;
 	
+	Constraints[i++] = Control_variables[0] + 200.0;
+	Constraints[i++] = -Control_variables[0] + 200.0;
+	Constraints[i++] = Control_variables[1];
+	Constraints[i++] = -Control_variables[1];
 }
 
 
@@ -74,7 +100,7 @@ void mpc_path_constraints (const double State_variables[NUM_STATE_VARIABLES], co
 
 double mpc_terminal_constraints(const double State_variables[NUM_STATE_VARIABLES])
 {
-	
+	return 0;
 }
 
 #endif // MPC_FORMULATE_CPP

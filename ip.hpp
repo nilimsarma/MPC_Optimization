@@ -18,16 +18,16 @@
 //mpc formulation parameters
 
 #define T_START	0
-#define T_END	6
-#define NUM_DISCRETIZATION (40 + 1)
+#define T_END	1
+#define NUM_DISCRETIZATION (20 + 1)
 #define INTERVAL_SIZE ( (T_END - T_START) / (NUM_DISCRETIZATION - 1) )
 
-#define NUM_STATE_VARIABLES 	11
-#define NUM_CONTROL_VARIABLES 	6
-#define NUM_PARAMETERS			87
+#define NUM_STATE_VARIABLES 	5
+#define NUM_CONTROL_VARIABLES 	2
+#define NUM_PARAMETERS			4
 
-#define NUM_PATH_CONSTRAINTS	
-#define NUM_TERMINAL_CONSTRAINTS 	1
+#define NUM_PATH_CONSTRAINTS		4
+#define NUM_TERMINAL_CONSTRAINTS 	0
 
 //Optimization problem formulation parameters
 
