@@ -1,5 +1,5 @@
 IDIR = /usr/include/lapacke
-CC = gcc
+CC = gcc 
 CFLAGS = -I$(IDIR)
 
 ODIR = ./
@@ -16,7 +16,7 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 $(ODIR)/%.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-hellomake: $(OBJ)
+my_mpc: $(OBJ)
 	gcc -o $@ $^ $(CFLAGS) -L $(LDIR) $(LIBS)
 
 .PHONY: clean
