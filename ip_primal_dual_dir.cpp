@@ -98,11 +98,18 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 			a[j * SQ_MATRIX_A_SIZE + i] = Sq_Matrix_A[i][j];	
 
 	for(i = 0; i < VECTOR_b_SIZE; i++)	b[i] = Vector_b[i];
-		
-	int n = SQ_MATRIX_A_SIZE, nrhs = 1, lda = SQ_MATRIX_A_SIZE, ldb = VECTOR_b_SIZE, info;
-	int ipiv[SQ_MATRIX_A_SIZE];
+
+	lapack_int n, nrhs, lda, ldb, info;	
+	n = SQ_MATRIX_A_SIZE;
+	nrhs = 1;
+	lda = SQ_MATRIX_A_SIZE;
+	ldb = VECTOR_b_SIZE;
+	lapack_int ipiv[SQ_MATRIX_A_SIZE];
 	
-	dgesv_( &n, &nrhs, a, &lda, ipiv, b, &ldb, &info );
+//	dgesv_( &n, &nrhs, a, &lda, ipiv, b, &ldb, &info );
+
+//	lapack_int LAPACKE_dgesv( int matrix_layout, lapack_int n, lapack_int nrhs, double* a, lapack_int lda, lapack_int* ipiv, double* b, lapack_int ldb );
+	info = LAPACKE_dgesv( LAPACK_COL_MAJOR, n, nrhs, a, lda, ipiv, b, ldb );
 
 	if(info == 0) 
 	{

@@ -3,6 +3,7 @@
 
 #include "ip.hpp"
 #include "mpc_discretize.hpp"
+#include "lapacke.h"
 
 //Solve Linear System Ax = b 
 
@@ -37,6 +38,6 @@ void Compute_vector_b2(const struct_ip_vars &s_ip_vars, double vector_b2[VECTOR_
 void Compute_vector_b3(const struct_ip_vars &s_ip_vars, double vector_b3[VECTOR_SIZE_b3]);
 double Compute_Lagrangian(const struct_ip_vars &s_ip_vars);
 
-int dgesv_(int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
+//int dgesv_(int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
 
 #endif // IP_PRIMAL_DUAL_DIR_HPP
