@@ -266,7 +266,7 @@ int main(int argc, char** argv)
 			s_alpha = Backtrack_alpha(s_ip_vars, s_primal_dual_dir, s_alpha_max);
 
 			//update IP variables
-			Update_IP_vars(s_ip_vars, s_alpha, s_primal_dual_dir)
+			Update_IP_vars(s_ip_vars, s_alpha, s_primal_dual_dir);
 		}
 
 		//update mu

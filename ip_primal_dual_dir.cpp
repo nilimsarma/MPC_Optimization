@@ -71,7 +71,7 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	double Vector_b2 [VECTOR_SIZE_b2];
 	double Vector_b3 [VECTOR_SIZE_b3];
 
-	Vector_b0 = Compute_Gradient_Lagrangian(s_ip_vars);
+	Compute_Gradient_Lagrangian(s_ip_vars, Vector_b0);
 	Compute_vector_b1(s_ip_vars, Vector_b1);
 	Compute_vector_b2(s_ip_vars, Vector_b2);
 	Compute_vector_b3(s_ip_vars, Vector_b3);
@@ -102,7 +102,7 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	int n = SQ_MATRIX_A_SIZE, nrhs = 1, lda = SQ_MATRIX_A_SIZE, ldb = VECTOR_b_SIZE, info;
 	int ipiv[SQ_MATRIX_A_SIZE];
 	
-	dgesv( n, nrhs, a, lda, ipiv, b, ldb, info );
+	dgesv( &n, &nrhs, a, &lda, ipiv, b, &ldb, &info );
 
 	if(info == 0) 
 	{
