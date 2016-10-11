@@ -106,8 +106,6 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	ldb = VECTOR_b_SIZE;
 	lapack_int ipiv[SQ_MATRIX_A_SIZE];
 	
-//	dgesv_( &n, &nrhs, a, &lda, ipiv, b, &ldb, &info );
-
 //	lapack_int LAPACKE_dgesv( int matrix_layout, lapack_int n, lapack_int nrhs, double* a, lapack_int lda, lapack_int* ipiv, double* b, lapack_int ldb );
 	info = LAPACKE_dgesv( LAPACK_COL_MAJOR, n, nrhs, a, lda, ipiv, b, ldb );
 
@@ -118,6 +116,7 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	else 
 	{
 		printf("\nLapack error!!!\n");
+		printf("\ninfo = %d\n", info);
 		exit(1);
 	}
 

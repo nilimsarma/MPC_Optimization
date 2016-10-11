@@ -47,7 +47,7 @@ void mpc_initial_value (double State_variables_initial_value[NUM_STATE_VARIABLES
 {
 	int i;
 	for(i = 0; i < NUM_STATE_VARIABLES; i++)
-		State_variables_initial_value[i] = 0.0;
+		State_variables_initial_value[i] = 0.5;
 }
 
 /****************************
@@ -82,7 +82,7 @@ void mpc_state_differential (const double State_variables[NUM_STATE_VARIABLES], 
 
 void mpc_path_constraints (const double State_variables[NUM_STATE_VARIABLES], const double Control_variables[NUM_CONTROL_VARIABLES], double Constraints [NUM_PATH_CONSTRAINTS])
 {
-	int i;
+	int i = 0;
 	
 	Constraints[i++] = Control_variables[0] + 200.0;
 	Constraints[i++] = -Control_variables[0] + 200.0;
