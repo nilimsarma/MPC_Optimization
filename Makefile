@@ -3,9 +3,10 @@ CC = gcc
 CFLAGS = -I$(IDIR)
 
 ODIR = ./
-LDIR = 
+LDIR = /usr/lib64
 
 LIBS = -lm
+LIBS += -L /usr/lib64 -llapack
 
 _DEPS = ip.hpp ip_iter.hpp ip_primal_dual_dir.hpp mpc_discretize.hpp mpc_formulate.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))

@@ -102,7 +102,7 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	int n = SQ_MATRIX_A_SIZE, nrhs = 1, lda = SQ_MATRIX_A_SIZE, ldb = VECTOR_b_SIZE, info;
 	int ipiv[SQ_MATRIX_A_SIZE];
 	
-	dgesv( &n, &nrhs, a, &lda, ipiv, b, &ldb, &info );
+	dgesv_( &n, &nrhs, a, &lda, ipiv, b, &ldb, &info );
 
 	if(info == 0) 
 	{
