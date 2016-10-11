@@ -20,4 +20,4 @@ mpc_formulate.o: mpc_formulate.cpp mpc_formulate.hpp ip.hpp
 .PHONY: clean 
 
 clean:
-	rm -rf *.o my_mpc
+	rm -rf *.o my_mpc 
