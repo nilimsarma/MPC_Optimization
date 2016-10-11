@@ -1,25 +1,23 @@
-IDIR = /usr/include/lapacke
-CC = gcc 
-CFLAGS = -I$(IDIR)
+CC      = g++
+CFLAGS  = -g -I /usr/include/lapacke
+LDFLAGS = -L /usr/lib64 -lm -llapack -llapacke
 
-ODIR = ./
-LDIR = /usr/lib64
+my_mpc: ip_iter.o ip_primal_dual_dir.o mpc_discretize.o mpc_formulate.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+	
+ip_iter.o: ip_iter.cpp ip_iter.hpp ip.hpp
+	$(CC) -c $(CFLAGS) $<
 
-LIBS = -lm -llapack
+ip_primal_dual_dir.o: ip_primal_dual_dir.cpp ip_primal_dual_dir.hpp ip.hpp
+	$(CC) -c $(CFLAGS) $<
 
-_DEPS = ip.hpp ip_iter.hpp ip_primal_dual_dir.hpp mpc_discretize.hpp mpc_formulate.hpp
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
-
-_OBJ = ip_iter.cpp ip_primal_dual_dir.cpp mpc_discretize.cpp mpc_formulate.cpp
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
-
-$(ODIR)/%.o: %.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-my_mpc: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS) -L $(LDIR) $(LIBS)
-
-.PHONY: clean
+mpc_discretize.o: mpc_discretize.cpp mpc_discretize.hpp ip.hpp
+	$(CC) -c $(CFLAGS) $<
+	
+mpc_formulate.o: mpc_formulate.cpp mpc_formulate.hpp ip.hpp
+	$(CC) -c $(CFLAGS) $<
+	
+.PHONY: clean 
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
+	rm -rf *.o my_mpc
