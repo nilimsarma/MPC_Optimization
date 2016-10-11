@@ -43,7 +43,7 @@ double mpc_objective_end_term(const double State_variables[NUM_STATE_VARIABLES],
 ****************************/
 
 
-void mpc_initial_value (double[NUM_STATE_VARIABLES] State_variables_initial_value)
+void mpc_initial_value (double State_variables_initial_value[NUM_STATE_VARIABLES])
 {
 	int i;
 	for(i = 0; i < NUM_STATE_VARIABLES; i++)
@@ -98,9 +98,10 @@ void mpc_path_constraints (const double State_variables[NUM_STATE_VARIABLES], co
 	
 ****************************/
 
-double mpc_terminal_constraints(const double State_variables[NUM_STATE_VARIABLES])
+void mpc_terminal_constraints(const double State_variables[NUM_STATE_VARIABLES], double terminal_constraints[NUM_TERMINAL_CONSTRAINTS])
 {
-	return 0;
+	int i;
+	for(i = 0; i < NUM_TERMINAL_CONSTRAINTS; i++)	terminal_constraints[i] = 0;
 }
 
 #endif // MPC_FORMULATE_CPP
