@@ -60,7 +60,7 @@ void Integrator(const double State_variables[NUM_STATE_VARIABLES], const double 
 
 	for(i = 0; i < NUM_STATE_VARIABLES; i++)
 	{
-		State_vars_updated[i] = State_vars + h*(b1*k1[i] + b2*k2[i]);
+		State_vars_updated[i] = State_vars[i] + h*(b1*k1[i] + b2*k2[i]);
 	}
 	
 }
