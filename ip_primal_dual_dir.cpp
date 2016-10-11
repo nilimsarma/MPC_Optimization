@@ -193,11 +193,11 @@ void Compute_Jacobian_Inequalities(const struct_ip_vars &s_ip_vars, double Jacob
 	{
 		//f0
 		s_ip_vars_1.Optimization_variables[j] += ESP_DIFFERENTIATION;
-		f0 = Compute_inequality_constraints(s_ip_vars_1, f0);
+		Compute_inequality_constraints(s_ip_vars_1, f0);
 
 		//f1
 		s_ip_vars_1.Optimization_variables[j] -= (2*ESP_DIFFERENTIATION);
-		f1 = Compute_inequality_constraints(s_ip_vars_1, f1);
+		Compute_inequality_constraints(s_ip_vars_1, f1);
 
 		for(i = 0; i < JACOBIAN_INEQUALITIES_NUM_ROWS; i++)
 		{
@@ -218,11 +218,11 @@ void Compute_Gradient_Lagrangian(const struct_ip_vars &s_ip_vars, double Gradien
 	{
 		//f0
 		s_ip_vars_1.Optimization_variables[j] += ESP_DIFFERENTIATION;
-		f0 = Compute_Lagrangian(s_ip_vars_1);
+		Compute_Lagrangian(s_ip_vars_1);
 
 		//f1
 		s_ip_vars_1.Optimization_variables[j] -= (2*ESP_DIFFERENTIATION);
-		f1 = Compute_Lagrangian(s_ip_vars_1);
+		Compute_Lagrangian(s_ip_vars_1);
 		
 		Gradient_Lagrangian[j] = (f0 - f1) / (2*ESP_DIFFERENTIATION);
 	}
@@ -249,13 +249,13 @@ void Compute_vector_b1(const struct_ip_vars &s_ip_vars, double vector_b1[VECTOR_
 
 void Compute_vector_b2(const struct_ip_vars &s_ip_vars, double vector_b2[VECTOR_SIZE_b2])
 {
-	vector_b2 = Compute_equality_constraints(s_ip_vars);
+	Compute_equality_constraints(s_ip_vars, vector_b2);
 }
 
 void Compute_vector_b3(const struct_ip_vars &s_ip_vars, double vector_b3[VECTOR_SIZE_b3])
 {
 	int i;	
-	vector_b3 = Compute_inequality_constraints(s_ip_vars);
+	Compute_inequality_constraints(s_ip_vars, vector_b3);
 
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
@@ -272,8 +272,8 @@ double Compute_Lagrangian(const struct_ip_vars &s_ip_vars)
 	int i = 0;
 
 	Lagrangian = Compute_objective_value(s_ip_vars);
-	equality_constraints = Compute_equality_constraints(s_ip_vars);
-	inequality_constraints = Compute_inequality_constraints(s_ip_vars);
+	Compute_equality_constraints(s_ip_vars, equality_constraints);
+	Compute_inequality_constraints(s_ip_vars, inequality_constraints);
 	
 	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
 	{
