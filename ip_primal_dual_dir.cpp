@@ -19,6 +19,20 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	Compute_Jacobian_Inequalities(s_ip_vars, Jacobian_Inequalities);
 	Compute_Diag_Matrix_Sigma(s_ip_vars, Diag_Matrix_Sigma);
 
+/*
+	printf("\n***Hessian_Lagrangian***\n");
+	print_matrix(&Hessian_Lagrangian[0][0],HESSIAN_LAGRANGIAN_SIZE,HESSIAN_LAGRANGIAN_SIZE);
+
+	printf("\n***Jacobian_Equalities***\n");
+	print_matrix(&Jacobian_Equalities[0][0],JACOBIAN_EQUALITIES_NUM_ROWS,JACOBIAN_EQUALITIES_NUM_COLS);
+
+	printf("\n***Jacobian_Inequalities***\n");
+	print_matrix(&Jacobian_Inequalities[0][0],JACOBIAN_INEQUALITIES_NUM_ROWS,JACOBIAN_INEQUALITIES_NUM_COLS);
+
+	printf("\n***Diag_Matrix_Sigma***\n");
+	print_vector(Diag_Matrix_Sigma,DIAG_MATRIX_SIGMA_SIZE);
+*/
+
 // ++ Create Sq_Matrix_A ++
 
 	double Sq_Matrix_A [SQ_MATRIX_A_SIZE][SQ_MATRIX_A_SIZE];
@@ -64,6 +78,10 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 		Sq_Matrix_A[j][i] = Sq_Matrix_A[i][j];
 	}
 
+//	check_matrix_A(Sq_Matrix_A, s_ip_vars);
+//	printf("\n***Sq_Matrix_A***\n");
+//	print_matrix(&Sq_Matrix_A[0][0],SQ_MATRIX_A_SIZE,SQ_MATRIX_A_SIZE);
+	
 // -- Create Sq_Matrix_A --
 
 	double Vector_b0 [VECTOR_SIZE_b0];	//Jacobian_Lagrangian
@@ -85,6 +103,10 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	for(i = 0; i < VECTOR_SIZE_b2; i++, j++)	Vector_b[j] = -Vector_b2[i];
 	for(i = 0; i < VECTOR_SIZE_b3; i++, j++)	Vector_b[j] = -Vector_b3[i];		
 
+//	check_vector_b(Vector_b, s_ip_vars);
+//	printf("\n***Vector_b***\n");
+//	print_vector(Vector_b,VECTOR_b_SIZE);
+	
 	double Vector_x [VECTOR_x_SIZE];	
 
 /* ++ Solve Linear System ++ */
@@ -122,6 +144,9 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 
 /* -- Solve Linear System -- */
 
+//	printf("\n***Vector_x***\n");
+//	print_vector(Vector_x,VECTOR_b_SIZE);
+
 	j = 0;
 	for(i = 0; i < VECTOR_SIZE_Px; i++, j++)	s_primal_dual_dir.Vector_Px[i] = Vector_x[j];
 	for(i = 0; i < VECTOR_SIZE_Ps; i++, j++)	s_primal_dual_dir.Vector_Ps[i] = Vector_x[j];
@@ -158,8 +183,11 @@ void Compute_Hessian_Lagrangian(const struct_ip_vars &s_ip_vars, double Hessian_
 			s_ip_vars_1.Optimization_variables[i] -= ESP_DIFFERENTIATION;
 			f2 = Compute_Lagrangian(s_ip_vars_1);
 
-			Hessian_Lagrangian[i][j] = (f0-f1-f2+f3)/ESP_DIFFERENTIATION;
+			//restore original 
+			s_ip_vars_1.Optimization_variables[j] -= ESP_DIFFERENTIATION;
 			
+			Hessian_Lagrangian[i][j] = (f0-f1-f2+f3)/(ESP_DIFFERENTIATION * ESP_DIFFERENTIATION);
+
 		}
 	}
 }
@@ -181,6 +209,9 @@ void Compute_Jacobian_Equalities(const struct_ip_vars &s_ip_vars, double Jacobia
 		s_ip_vars_1.Optimization_variables[j] -= (2*ESP_DIFFERENTIATION);
 		Compute_equality_constraints(s_ip_vars_1, f1);
 
+		//restore original
+		s_ip_vars_1.Optimization_variables[j] += ESP_DIFFERENTIATION;
+		
 		for(i = 0; i < JACOBIAN_EQUALITIES_NUM_ROWS; i++)
 		{
 			Jacobian_Equalities[i][j] = (f0[i] - f1[i]) / (2*ESP_DIFFERENTIATION);
@@ -205,6 +236,9 @@ void Compute_Jacobian_Inequalities(const struct_ip_vars &s_ip_vars, double Jacob
 		s_ip_vars_1.Optimization_variables[j] -= (2*ESP_DIFFERENTIATION);
 		Compute_inequality_constraints(s_ip_vars_1, f1);
 
+		//restore original
+		s_ip_vars_1.Optimization_variables[j] += ESP_DIFFERENTIATION;
+		
 		for(i = 0; i < JACOBIAN_INEQUALITIES_NUM_ROWS; i++)
 		{
 			Jacobian_Inequalities[i][j] = (f0[i] - f1[i]) / (2*ESP_DIFFERENTIATION);
@@ -224,11 +258,14 @@ void Compute_Gradient_Lagrangian(const struct_ip_vars &s_ip_vars, double Gradien
 	{
 		//f0
 		s_ip_vars_1.Optimization_variables[j] += ESP_DIFFERENTIATION;
-		Compute_Lagrangian(s_ip_vars_1);
+		f0 = Compute_Lagrangian(s_ip_vars_1);
 
 		//f1
 		s_ip_vars_1.Optimization_variables[j] -= (2*ESP_DIFFERENTIATION);
-		Compute_Lagrangian(s_ip_vars_1);
+		f1 = Compute_Lagrangian(s_ip_vars_1);
+
+		//restore original
+		s_ip_vars_1.Optimization_variables[j] += ESP_DIFFERENTIATION;
 		
 		Gradient_Lagrangian[j] = (f0 - f1) / (2*ESP_DIFFERENTIATION);
 	}
@@ -280,19 +317,141 @@ double Compute_Lagrangian(const struct_ip_vars &s_ip_vars)
 	Lagrangian = Compute_objective_value(s_ip_vars);
 	Compute_equality_constraints(s_ip_vars, equality_constraints);
 	Compute_inequality_constraints(s_ip_vars, inequality_constraints);
-	
+/*
+	printf("\n***equality_constraints***\n");
+	print_vector(equality_constraints,NUM_EQUALITY_CONSTRAINTS);
+
+	printf("\n***inequality_constraints***\n");
+	print_vector(inequality_constraints,NUM_INEQUALITY_CONSTRAINTS);
+*/
+
 	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
 	{
-		Lagrangian += s_ip_vars.Lagrange_multiplier_equality[i]*equality_constraints[i];
+		Lagrangian -= s_ip_vars.Lagrange_multiplier_equality[i]*equality_constraints[i];
 	}
 
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
-		Lagrangian += s_ip_vars.Lagrange_multiplier_inequality[i]*(inequality_constraints[i] - s_ip_vars.S[i]);
+		Lagrangian -= s_ip_vars.Lagrange_multiplier_inequality[i]*(inequality_constraints[i] - s_ip_vars.S[i]);
 	}
 
 	return Lagrangian;
 }
 
+//test
+void check_vector_b(const double Vector_b[VECTOR_b_SIZE], const struct_ip_vars &s_ip_vars)
+{
+	double x = s_ip_vars.Optimization_variables[0];
+	double y = s_ip_vars.Optimization_variables[1];
 
+	double y1 = s_ip_vars.Lagrange_multiplier_equality[0];
+
+	double z1 = s_ip_vars.Lagrange_multiplier_inequality[0];
+	double z2 = s_ip_vars.Lagrange_multiplier_inequality[1];
+	double z3 = s_ip_vars.Lagrange_multiplier_inequality[2];
+	double z4 = s_ip_vars.Lagrange_multiplier_inequality[3];
+
+	double s1 = s_ip_vars.S[0];
+	double s2 = s_ip_vars.S[1];
+	double s3 = s_ip_vars.S[2];	
+	double s4 = s_ip_vars.S[3];
+
+	double mu = s_ip_vars.mu;
+	
+	double Vector_b_1[VECTOR_b_SIZE];
+
+	int i = 0;
+	Vector_b_1[i++] = 2*x - 2*y - 2 - y1 + z1/2 - z2 - z3;
+	Vector_b_1[i++] = -2*x + 4*y - 6 - y1 + z1/2 + 2*z2 - z4;
+	
+	Vector_b_1[i++] = z1 - mu/s1;
+	Vector_b_1[i++] = z2 - mu/s2;
+	Vector_b_1[i++] = z3 - mu/s3;
+	Vector_b_1[i++] = z4 - mu/s4;
+	
+	Vector_b_1[i++] = x + y - 2;
+
+	Vector_b_1[i++] = 1 - x/2 - y/2 - s1;
+	Vector_b_1[i++] = 2 + x - 2*y - s2;
+	Vector_b_1[i++] = x - s3;	
+	Vector_b_1[i++] = y - s4;
+
+	for(i = 0; i < VECTOR_b_SIZE; i++)	Vector_b_1[i] += Vector_b[i];
+
+	
+	printf("\n***Vector_b_test***\n");
+	print_vector(Vector_b_1,VECTOR_b_SIZE);
+}
+
+void check_matrix_A(const double A[SQ_MATRIX_A_SIZE][SQ_MATRIX_A_SIZE], const struct_ip_vars &s_ip_vars)
+{
+	double z1 = s_ip_vars.Lagrange_multiplier_inequality[0];
+	double z2 = s_ip_vars.Lagrange_multiplier_inequality[1];
+	double z3 = s_ip_vars.Lagrange_multiplier_inequality[2];
+	double z4 = s_ip_vars.Lagrange_multiplier_inequality[3];
+
+	double s1 = s_ip_vars.S[0];
+	double s2 = s_ip_vars.S[1];
+	double s3 = s_ip_vars.S[2];	
+	double s4 = s_ip_vars.S[3];
+
+	double A1[SQ_MATRIX_A_SIZE][SQ_MATRIX_A_SIZE];
+
+	int i,j;
+
+	for(i = 0; i < SQ_MATRIX_A_SIZE; i++)
+		for(j = 0; j < SQ_MATRIX_A_SIZE; j++)
+			A1[i][j] = 0.0;
+
+	A1[0][0] = 2.0;
+	A1[0][1] = -2.0;
+	A1[0][6] = 1.0;
+	A1[0][7] = -0.5;
+	A1[0][8] = 1.0;
+	A1[0][9] = 1.0;
+
+	A1[1][0] = -2.0;
+	A1[1][1] = 4.0;
+	A1[1][6] = 1.0;
+	A1[1][7] = -0.5;
+	A1[1][8] = -2.0;
+	A1[1][10] = 1.0;
+
+	A1[2][2] = z1/s1;
+	A1[2][7] = -1.0;
+
+	A1[3][3] = z2/s2;
+	A1[3][8] = -1.0;
+
+	A1[4][4] = z3/s3;
+	A1[4][9] = -1.0;
+
+	A1[5][5] = z4/s4;
+	A1[5][10] = -1.0;
+
+	A1[6][0] = 1.0;
+	A1[6][1] = 1.0;
+
+	A1[7][0] = -0.5;
+	A1[7][1] = -0.5;
+	A1[7][2] = -1.0;
+
+	A1[8][0] = 1.0;
+	A1[8][1] = -2.0;
+	A1[8][3] = -1.0;
+
+	A1[9][0] = 1.0;	
+	A1[9][4] = -1.0;	
+
+	A1[10][1] = 1.0;	
+	A1[10][5] = -1.0;	
+
+	for(i = 0; i < SQ_MATRIX_A_SIZE; i++)
+		for(j = 0; j < SQ_MATRIX_A_SIZE; j++)
+			A1[i][j] -= A[i][j];
+
+	printf("\n***A_test***\n");
+	print_matrix(&A1[0][0],SQ_MATRIX_A_SIZE,SQ_MATRIX_A_SIZE);
+
+}
 #endif // IP_PRIMAL_DUAL_DIR_CPP
