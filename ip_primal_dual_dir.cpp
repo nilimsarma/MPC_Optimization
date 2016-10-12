@@ -19,6 +19,20 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 	Compute_Jacobian_Inequalities(s_ip_vars, Jacobian_Inequalities);
 	Compute_Diag_Matrix_Sigma(s_ip_vars, Diag_Matrix_Sigma);
 
+/*
+	printf("\n***Hessian_Lagrangian***\n");
+	print_matrix(&Hessian_Lagrangian[0][0],HESSIAN_LAGRANGIAN_SIZE,HESSIAN_LAGRANGIAN_SIZE);
+
+	printf("\n***Jacobian_Equalities***\n");
+	print_matrix(&Jacobian_Equalities[0][0],JACOBIAN_EQUALITIES_NUM_ROWS,JACOBIAN_EQUALITIES_NUM_COLS);
+
+	printf("\n***Jacobian_Inequalities***\n");
+	print_matrix(&Jacobian_Inequalities[0][0],JACOBIAN_INEQUALITIES_NUM_ROWS,JACOBIAN_INEQUALITIES_NUM_COLS);
+
+	printf("\n***Diag_Matrix_Sigma***\n");
+	print_vector(Diag_Matrix_Sigma,DIAG_MATRIX_SIGMA_SIZE);
+*/
+
 // ++ Create Sq_Matrix_A ++
 
 	double Sq_Matrix_A [SQ_MATRIX_A_SIZE][SQ_MATRIX_A_SIZE];
@@ -64,6 +78,9 @@ void Compute_primal_dual_direction (const struct_ip_vars &s_ip_vars, struct_prim
 		Sq_Matrix_A[j][i] = Sq_Matrix_A[i][j];
 	}
 
+//	printf("\n***Sq_Matrix_A***\n");
+//	print_matrix(&Sq_Matrix_A[0][0],SQ_MATRIX_A_SIZE,SQ_MATRIX_A_SIZE);
+	
 // -- Create Sq_Matrix_A --
 
 	double Vector_b0 [VECTOR_SIZE_b0];	//Jacobian_Lagrangian
@@ -159,7 +176,9 @@ void Compute_Hessian_Lagrangian(const struct_ip_vars &s_ip_vars, double Hessian_
 			f2 = Compute_Lagrangian(s_ip_vars_1);
 
 			Hessian_Lagrangian[i][j] = (f0-f1-f2+f3)/ESP_DIFFERENTIATION;
-			
+
+			//restore original 
+			s_ip_vars_1.Optimization_variables[j] -= ESP_DIFFERENTIATION;
 		}
 	}
 }
@@ -280,7 +299,14 @@ double Compute_Lagrangian(const struct_ip_vars &s_ip_vars)
 	Lagrangian = Compute_objective_value(s_ip_vars);
 	Compute_equality_constraints(s_ip_vars, equality_constraints);
 	Compute_inequality_constraints(s_ip_vars, inequality_constraints);
-	
+/*
+	printf("\n***equality_constraints***\n");
+	print_vector(equality_constraints,NUM_EQUALITY_CONSTRAINTS);
+
+	printf("\n***inequality_constraints***\n");
+	print_vector(inequality_constraints,NUM_INEQUALITY_CONSTRAINTS);
+*/
+
 	for(i = 0; i < NUM_EQUALITY_CONSTRAINTS; i++)
 	{
 		Lagrangian += s_ip_vars.Lagrange_multiplier_equality[i]*equality_constraints[i];
@@ -290,6 +316,8 @@ double Compute_Lagrangian(const struct_ip_vars &s_ip_vars)
 	{
 		Lagrangian += s_ip_vars.Lagrange_multiplier_inequality[i]*(inequality_constraints[i] - s_ip_vars.S[i]);
 	}
+
+//	printf("\nLagrangian = %f", Lagrangian);
 
 	return Lagrangian;
 }

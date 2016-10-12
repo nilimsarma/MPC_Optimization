@@ -221,15 +221,11 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 	return error_max;
 }
 
-int main(int argc, char** argv)
+void ip_init(struct_ip_vars &s_ip_vars)
 {
-	struct_ip_vars s_ip_vars;
-	struct_primal_dual_direction s_primal_dual_dir;
-	struct_alpha s_alpha_max, s_alpha;
-
 	int i,j,k;
 
-// ++ select intial points ++
+	// ++ select intial points ++
 
 	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
 		s_ip_vars.Optimization_variables[i] = (rand() % 1000) / 1000.0;
@@ -243,15 +239,40 @@ int main(int argc, char** argv)
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 		s_ip_vars.Lagrange_multiplier_inequality[i] = (rand() % 1000) / 1000.0;
 
-// -- select intial points --
+	// -- select intial points --
 
-//set parameter values
+	//set parameter values
 
 	s_ip_vars.mu = MU;
 	s_ip_vars.nu = NU;
 	s_ip_vars.eta = ETA;
+}
 
-//start iterations	
+void print_problem_parameters(void)
+{
+	int i,j,k;
+	
+	//Optimization problem formulation parameters
+
+	printf("\n**************\n");
+
+	printf("\nNUM_OPTMIZATION_VARIABLES = %d", NUM_OPTMIZATION_VARIABLES);
+	printf("\nNUM_EQUALITY_CONSTRAINTS = %d", NUM_EQUALITY_CONSTRAINTS);
+	printf("\nNUM_INEQUALITY_CONSTRAINTS = %d", NUM_INEQUALITY_CONSTRAINTS);
+
+	printf("\n**************\n");
+}
+
+int main(int argc, char** argv)
+{
+	struct_ip_vars s_ip_vars;
+	struct_primal_dual_direction s_primal_dual_dir;
+	struct_alpha s_alpha_max, s_alpha;
+
+	ip_init(s_ip_vars);
+	print_problem_parameters();
+	
+	//start iterations	
 	while(Compute_Error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
 	{
 		while(Compute_Error(s_ip_vars, s_ip_vars.mu) > ERROR_TOL_MU)
