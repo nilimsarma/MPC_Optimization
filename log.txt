@@ -1,0 +1,7 @@
+rm -rf *.o my_mpc 
+g++ -c -g -I /usr/include/lapacke ip_iter.cpp
+g++ -c -g -I /usr/include/lapacke ip_primal_dual_dir.cpp
+g++ -c -g -I /usr/include/lapacke mpc_discretize.cpp
+g++ -c -g -I /usr/include/lapacke mpc_formulate.cpp
+g++ -c -g -I /usr/include/lapacke utils.cpp
+g++ -o my_mpc ip_iter.o ip_primal_dual_dir.o mpc_discretize.o mpc_formulate.o utils.o -L /usr/lib64 -lm -llapack -llapacke
