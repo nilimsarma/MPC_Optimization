@@ -24,6 +24,8 @@ void Compute_inequality_constraints(const struct_ip_vars &s_ip_vars, double Ineq
 	Inequality_constraints[1] = 2 + x - 2*y;
 	Inequality_constraints[2] = x;
 	Inequality_constraints[3] = y;
+	Inequality_constraints[4] = x + y - 2;
+	Inequality_constraints[5] = 2 - x - y;
 }
 
 #endif // IP_FORMULATE_CPP

@@ -11,7 +11,7 @@
 #define TAU	0.995
 //#define ERROR_TOL_MU		1.0e-5
 #define	ERROR_TOL_TOTAL		1.0e-5
-#define SIGMA_MU			0.2
+#define SIGMA_MU			0.5
 #define ESP_DIFFERENTIATION	1.0e-5
 //#define MU	1.0
 #define NU	1.0

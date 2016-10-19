@@ -10,8 +10,8 @@
 
 //#define TAU	0.995
 //#define ERROR_TOL_MU		1.0e-10
-#define	ERROR_TOL_TOTAL		1.0e-6
-//#define SIGMA_MU			0.9
+#define	ERROR_TOL_TOTAL		1.0e-5
+#define SIGMA_MU			0.5
 #define ESP_DIFFERENTIATION	1.0e-5
 //#define MU	1.0
 #define NU	1
@@ -23,7 +23,7 @@
 //Optimization problem formulation parameters
 
 #define NUM_OPTMIZATION_VARIABLES	2
-#define NUM_INEQUALITY_CONSTRAINTS  4
+#define NUM_INEQUALITY_CONSTRAINTS  6
 
 //primal dual direction parameters
 
