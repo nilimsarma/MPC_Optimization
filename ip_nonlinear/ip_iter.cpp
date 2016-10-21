@@ -9,8 +9,6 @@ double Compute_alpha_max(const struct_ip_vars &s_ip_vars, const struct_primal_du
 	double alpha_max;
 	double t;
 		
-	//alpha_s_max
-	  
 	alpha_max = 0.0;		
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
@@ -21,9 +19,9 @@ double Compute_alpha_max(const struct_ip_vars &s_ip_vars, const struct_primal_du
 		if( t > alpha_max )	alpha_max = t;
 	}
 
-	alpha_max = 0.95 / alpha_max;
+	alpha_max = TAU / alpha_max;
 
-	printf("\nalpha_max = %f", alpha_max);	
+	print_alpha_max_value(alpha_max);
 	return alpha_max;
 }
 
@@ -70,7 +68,6 @@ double Compute_directional_derivative_merit_function(const struct_ip_vars &s_ip_
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 	{
 		s_ip_vars_1.W[i] += ESP_DIFFERENTIATION * s_primal_dual_dir.Vector_Pw[i];
-		//s_ip_vars_1.Lagrange_multiplier_inequality[i] += ESP_DIFFERENTIATION * s_primal_dual_dir.Vector_Py[i];
 	}
 
 	dir_deriv_merit_func += Compute_merit_function(s_ip_vars_1);
@@ -92,7 +89,7 @@ double Backtrack_alpha(struct_ip_vars &s_ip_vars, const struct_primal_dual_direc
 	while( (dir_deriv_merit_function = Compute_directional_derivative_merit_function(s_ip_vars, s_primal_dual_dir)) >= 0)
 	{
 		s_ip_vars.nu *= 10;	
-		printf("\nnu = %e\n", s_ip_vars.nu);
+		print_nu_value(s_ip_vars.nu);
 	}
 	merit_function = Compute_merit_function(s_ip_vars);
 
@@ -109,9 +106,9 @@ double Backtrack_alpha(struct_ip_vars &s_ip_vars, const struct_primal_dual_direc
 
 		merit_function_updated = Compute_merit_function(s_ip_vars_1);
 
-	} while( (merit_function + s_ip_vars_1.eta * alpha * dir_deriv_merit_function - merit_function_updated) < 0);
+	} while( (merit_function + ETA * alpha * dir_deriv_merit_function - merit_function_updated) < 0);
 	
-	printf("\nalpha = %f", alpha);
+	print_alpha_value(alpha);
 	return alpha;
 }
 
@@ -133,6 +130,8 @@ void Update_IP_vars(struct_ip_vars &s_ip_vars, const double &alpha, const struct
 	{
 		s_ip_vars.Lagrange_multiplier_inequality[i] += alpha * s_primal_dual_dir.Vector_Py[i];			
 	}
+	
+	print_ip_vars(s_ip_vars);
 }
 
 double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
@@ -177,19 +176,7 @@ double Compute_Error(const struct_ip_vars &s_ip_vars, double mu)
 		if ( err[i] > error_max)	{error_max = err[i]; indx = i;}
 	}
 
-	if(mu == 0)	
-	{
-		printf("\n***Error*** = %e", error_max);
-	}
-	else printf("\n\tError = %e", error_max);
-
-	printf("\nmu = %f, indx = %d", s_ip_vars.mu, indx);
-	
-	for(i = 0; i < NUM_OPTMIZATION_VARIABLES; i++)
-		printf("\nOpt_var[%d] = %f",i, s_ip_vars.Optimization_variables[i]);
-	
-	printf("\n");
-
+	print_error_value(error_max, mu);
 
 	return error_max;
 }
@@ -209,13 +196,13 @@ void ip_init(struct_ip_vars &s_ip_vars)
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
 		s_ip_vars.Lagrange_multiplier_inequality[i] = (rand() % 1000) / 1000.0;
 
+	print_ip_vars(s_ip_vars);
 	// -- select intial points --
 
 	//set parameter values
 
-	s_ip_vars.nu = NU;
-	s_ip_vars.eta = ETA;
-
+	s_ip_vars.nu = NU;	
+	print_nu_value(s_ip_vars.nu);
 
 	s_ip_vars.mu = 0;
 	for(i = 0; i < NUM_INEQUALITY_CONSTRAINTS; i++)
@@ -223,40 +210,27 @@ void ip_init(struct_ip_vars &s_ip_vars)
 		s_ip_vars.mu += s_ip_vars.W[i] * s_ip_vars.Lagrange_multiplier_inequality[i];
 	}
 	s_ip_vars.mu *= (SIGMA_MU / NUM_INEQUALITY_CONSTRAINTS);
-}
-
-void print_problem_parameters(void)
-{
-	int i,j,k;
-	
-	//Optimization problem formulation parameters
-
-	printf("\n**************\n");
-
-	printf("\nNUM_OPTMIZATION_VARIABLES = %d", NUM_OPTMIZATION_VARIABLES);
-	printf("\nNUM_INEQUALITY_CONSTRAINTS = %d", NUM_INEQUALITY_CONSTRAINTS);
-
-	printf("\n**************\n");
+	print_mu_value(s_ip_vars.mu);
 }
 
 int main(int argc, char** argv)
 {
-	int i,j,k, itr;
+	int i,j,k;
 	struct_ip_vars s_ip_vars;
 	struct_primal_dual_direction s_primal_dual_dir;
 	double alpha_max, alpha;
 
-	ip_init(s_ip_vars);
 	print_problem_parameters();
+	ip_init(s_ip_vars);
 	
 	//start iterations	
-	itr = 0;
+	j = 0;
 	while(Compute_Error(s_ip_vars, 0) > ERROR_TOL_TOTAL)
 	{
 		k = 0;
 		while(Compute_Error(s_ip_vars, s_ip_vars.mu) > (s_ip_vars.mu)*10)
 		{	
-			k++; itr++;
+			k++; j++;
 			//compute primal dual directions
 			Compute_primal_dual_direction (s_ip_vars, s_primal_dual_dir);
 			
@@ -284,10 +258,11 @@ int main(int argc, char** argv)
 				s_ip_vars.mu += s_ip_vars.W[i] * s_ip_vars.Lagrange_multiplier_inequality[i];
 			}
 			s_ip_vars.mu *= (SIGMA_MU / NUM_INEQUALITY_CONSTRAINTS);
-		}
+		}		
+		print_mu_value(s_ip_vars.mu);
 	}
 
-	printf("\n\nIterations = %d\n", itr);
+	printf("\n\nIterations = %d\n", j);
 }
 
 #endif //IP_ITER_CPP

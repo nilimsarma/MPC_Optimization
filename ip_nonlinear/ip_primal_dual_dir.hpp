@@ -3,6 +3,7 @@
 
 #include "ip.hpp"
 #include "ip_formulate.hpp"
+#include "utils.hpp"
 #include "lapacke.h"
 
 //Solve Linear System Ax = b 

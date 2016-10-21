@@ -3,6 +3,7 @@
 
 #include "ip.hpp"
 #include "mpc_discretize.hpp"
+#include "utils.hpp"
 #include "lapacke.h"
 
 //Solve Linear System Ax = b 
@@ -34,11 +35,15 @@ void Compute_Jacobian_Inequalities(const struct_ip_vars &s_ip_vars, double Jacob
 void Compute_Diag_Matrix_Sigma(const struct_ip_vars &s_ip_vars, double Diag_Matrix_Sigma[DIAG_MATRIX_SIGMA_SIZE]);
 void Compute_Gradient_Lagrangian(const struct_ip_vars &s_ip_vars, double Gradient_Lagrangian[NUM_OPTMIZATION_VARIABLES]);
 void Compute_vector_b1(const struct_ip_vars &s_ip_vars, double vector_b1[VECTOR_SIZE_b1]);
+#if (NUM_EQUALITY_CONSTRAINTS > 0)
 void Compute_vector_b2(const struct_ip_vars &s_ip_vars, double vector_b2[VECTOR_SIZE_b2]);
+#endif
 void Compute_vector_b3(const struct_ip_vars &s_ip_vars, double vector_b3[VECTOR_SIZE_b3]);
 double Compute_Lagrangian(const struct_ip_vars &s_ip_vars);
 
+#if 0
 void check_vector_b(const double Vector_b[VECTOR_b_SIZE], const struct_ip_vars &s_ip_vars);
 void check_matrix_A(const double A[SQ_MATRIX_A_SIZE][SQ_MATRIX_A_SIZE], const struct_ip_vars &s_ip_vars);
+#endif
 
 #endif // IP_PRIMAL_DUAL_DIR_HPP

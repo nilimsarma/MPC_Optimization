@@ -4,21 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "math.h"
-#include "utils.hpp"
-
-//Interior Point Algrithm parameters
-
-#define TAU	0.995
-//#define ERROR_TOL_MU		1.0e-5
-#define	ERROR_TOL_TOTAL		1.0e-5
-#define SIGMA_MU			0.5
-#define ESP_DIFFERENTIATION	1.0e-5
-//#define MU	1.0
-#define NU	1.0
-#define ETA	0.3
-#define ALPHA_BACKTRACK_RATIO 0.5
-
-#define NUM_ERROR_TERMS 4
 
 //mpc formulation parameters
 
@@ -45,9 +30,25 @@
 #else
 
 #define NUM_OPTMIZATION_VARIABLES	2
-#define NUM_EQUALITY_CONSTRAINTS	1
-#define NUM_INEQUALITY_CONSTRAINTS  4
+#define NUM_EQUALITY_CONSTRAINTS	0
+#define NUM_INEQUALITY_CONSTRAINTS  6
 
+#endif
+
+//Interior Point Algrithm parameters
+
+#define TAU	0.95
+#define	ERROR_TOL_TOTAL		1.0e-6
+#define SIGMA_MU			0.5
+#define ESP_DIFFERENTIATION	1.0e-5
+#define NU	1.0
+#define ETA	0.3
+#define ALPHA_BACKTRACK_RATIO 0.5
+
+#if (NUM_EQUALITY_CONSTRAINTS > 0)
+#define NUM_ERROR_TERMS 4
+#else
+#define NUM_ERROR_TERMS 3
 #endif
 
 //primal dual direction parameters
@@ -62,13 +63,15 @@
 typedef struct
 {
 	double Optimization_variables[NUM_OPTMIZATION_VARIABLES];
-	double S[NUM_INEQUALITY_CONSTRAINTS];
+	double Slack[NUM_INEQUALITY_CONSTRAINTS];
+	double Lagrange_multiplier_inequality[NUM_INEQUALITY_CONSTRAINTS];  //z
+
+#if (NUM_EQUALITY_CONSTRAINTS > 0)	
 	double Lagrange_multiplier_equality[NUM_EQUALITY_CONSTRAINTS];	//y
-	double Lagrange_multiplier_inequality[NUM_INEQUALITY_CONSTRAINTS]; //z
+#endif
 	
 	double mu;
 	double nu;
-	double eta;
 	
 } struct_ip_vars;
 
@@ -76,9 +79,12 @@ typedef struct
 {
 	double Vector_Px [VECTOR_SIZE_Px];
 	double Vector_Ps [VECTOR_SIZE_Ps];
-	double Vector_Py [VECTOR_SIZE_Py];
 	double Vector_Pz [VECTOR_SIZE_Pz];
-		
+	
+#if (NUM_EQUALITY_CONSTRAINTS > 0)	
+	double Vector_Py [VECTOR_SIZE_Py];
+#endif
+
 } struct_primal_dual_direction;
 
 typedef struct  
@@ -88,5 +94,14 @@ typedef struct
 	
 } struct_alpha;
 
+
+#define LOG_OPTIMIZATION_VARIABLES 1
+#define LOG_INEQUALITY_CONSTRAINTS 1
+#define LOG_EQUALITY_CONSTRAINTS 1
+#define LOG_SLACK_VARIABLES 1
+#define LOG_MU_VALUE 1
+#define LOG_NU_VALUE 1
+#define LOG_ALPHA_VALUE 1
+#define LOG_ERROR_VALUE 1
 
 #endif // IP_HPP

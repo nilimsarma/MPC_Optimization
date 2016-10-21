@@ -160,6 +160,7 @@ double Compute_objective_value(const struct_ip_vars &s_ip_vars)
 	return objective_value;
 }
 
+#if (NUM_EQUALITY_CONSTRAINTS > 0)
 void Compute_equality_constraints(const struct_ip_vars &s_ip_vars, double Equality_constraints[NUM_EQUALITY_CONSTRAINTS])
 {
 	double x = s_ip_vars.Optimization_variables[0];
@@ -167,6 +168,7 @@ void Compute_equality_constraints(const struct_ip_vars &s_ip_vars, double Equali
 
 	Equality_constraints[0] = x + y - 2;
 }
+#endif
 
 void Compute_inequality_constraints(const struct_ip_vars &s_ip_vars, double Inequality_constraints[NUM_INEQUALITY_CONSTRAINTS])
 {
@@ -177,6 +179,10 @@ void Compute_inequality_constraints(const struct_ip_vars &s_ip_vars, double Ineq
 	Inequality_constraints[1] = 2 + x - 2*y;
 	Inequality_constraints[2] = x;
 	Inequality_constraints[3] = y;
+#if (NUM_INEQUALITY_CONSTRAINTS > 4)
+		Inequality_constraints[4] = x + y - 2;
+		Inequality_constraints[5] = 2 - x - y;
+#endif
 }
 
 #endif

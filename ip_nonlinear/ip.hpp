@@ -4,16 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "math.h"
-#include "utils.hpp"
 
 //Interior Point Algrithm parameters
 
-//#define TAU	0.995
-//#define ERROR_TOL_MU		1.0e-10
-#define	ERROR_TOL_TOTAL		1.0e-5
+#define TAU	0.95
+#define	ERROR_TOL_TOTAL		1.0e-6
 #define SIGMA_MU			0.5
 #define ESP_DIFFERENTIATION	1.0e-5
-//#define MU	1.0
 #define NU	1
 #define ETA	0.3
 #define ALPHA_BACKTRACK_RATIO 0.5
@@ -23,7 +20,7 @@
 //Optimization problem formulation parameters
 
 #define NUM_OPTMIZATION_VARIABLES	2
-#define NUM_INEQUALITY_CONSTRAINTS  6
+#define NUM_INEQUALITY_CONSTRAINTS  4
 
 //primal dual direction parameters
 
@@ -41,7 +38,6 @@ typedef struct
 	
 	double mu;
 	double nu;
-	double eta;
 	
 } struct_ip_vars;
 
@@ -53,5 +49,13 @@ typedef struct
 		
 } struct_primal_dual_direction;
 
+#define LOG_OPTIMIZATION_VARIABLES 1
+#define LOG_INEQUALITY_CONSTRAINTS 1
+#define LOG_SLACK_VARIABLES 1
+#define LOG_MU_VALUE 1
+#define LOG_NU_VALUE 1
+#define LOG_ALPHA_VALUE 1
+#define LOG_ALPHA_MAX_VALUE 0
+#define LOG_ERROR_VALUE 1
 
 #endif // IP_HPP

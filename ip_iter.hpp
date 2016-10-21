@@ -4,6 +4,7 @@
 #include "ip.hpp"
 #include "mpc_discretize.hpp"
 #include "ip_primal_dual_dir.hpp"
+#include "utils.hpp"
 
 struct_alpha Compute_alpha_max(const struct_ip_vars &s_ip_vars, const struct_primal_dual_direction &s_primal_dual_dir);
 double Compute_merit_function(const struct_ip_vars &s_ip_vars);
