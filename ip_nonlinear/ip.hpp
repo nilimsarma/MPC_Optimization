@@ -8,7 +8,7 @@
 //Interior Point Algrithm parameters
 
 #define TAU	0.95
-#define	ERROR_TOL_TOTAL		1.0e-6
+#define	ERROR_TOL_TOTAL		1.0e-5
 #define SIGMA_MU			0.5
 #define ESP_DIFFERENTIATION	1.0e-5
 #define NU	1
